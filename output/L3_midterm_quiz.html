@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3 段考模式刷題</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Microsoft JhengHei',sans-serif;background:#fef2f2;color:#1a1a2e;line-height:1.6}
+.app{max-width:680px;margin:0 auto;padding:0 12px 80px}
+header{background:linear-gradient(135deg,#dc3545,#b91c1c);color:#fff;padding:16px;border-radius:0 0 16px 16px;margin-bottom:16px;text-align:center}
+header h1{font-size:18px}header p{font-size:13px;opacity:.85;margin-top:4px}
+.progress{height:6px;background:#fecdd3;border-radius:3px;margin:12px 0;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#dc3545,#f87171);border-radius:3px;transition:width .4s}
+.qcard{background:#fff;border-radius:14px;padding:18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #fecdd3}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.qnum{font-size:13px;color:#888;font-weight:600}
+.bloom-badge{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:#fff}
+.src-badge{padding:2px 8px;border-radius:6px;font-size:11px;background:#fef2f2;color:#dc3545;border:1px solid #fecdd3}
+.qtext{font-size:15px;font-weight:600;margin-bottom:12px}
+.quiz-option{display:block;width:100%;text-align:left;padding:12px 16px;margin:6px 0;border:2px solid #fecdd3;border-radius:10px;background:#fff;font-size:14px;cursor:pointer;transition:all .2s}
+.quiz-option:hover{border-color:#dc3545;background:#fef2f2}
+.quiz-option.correct{border-color:#22c55e;background:#f0fdf4;color:#166534}
+.quiz-option.wrong{border-color:#ef4444;background:#fef2f2;color:#991b1b}
+.quiz-option:disabled{cursor:default}
+.fill-input{border:none;border-bottom:2px solid #dc3545;background:transparent;font-size:16px;padding:4px 8px;width:150px;outline:none;text-align:center}
+.fill-input.correct{border-color:#22c55e;color:#166534}
+.fill-input.wrong{border-color:#ef4444;color:#991b1b}
+.fb{display:none;margin-top:12px;padding:12px;background:#f8fafb;border-radius:10px;border-left:3px solid #dc3545;font-size:13px}
+.fb.show{display:block;animation:fadeIn .3s}
+.fb-title{font-weight:700;color:#dc3545;margin-bottom:6px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.score-box{text-align:center;padding:24px;background:linear-gradient(135deg,#fef2f2,#fff);border-radius:14px;margin:16px 0;border:1px solid #fecdd3}
+.score-box .score{font-size:48px;font-weight:700;color:#dc3545}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;transition:all .2s}
+.btn-primary{background:#dc3545;color:#fff}.btn-primary:hover{background:#b91c1c}
+.btn-reset{background:#f1f5f9;color:#64748b}.btn-reset:hover{background:#e2e8f0}
+.flex-center{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.wrong-list{margin-top:14px}
+.wrong-item{background:#fef2f2;border-radius:8px;padding:10px;margin:6px 0;font-size:13px}
+a.back{display:inline-block;margin:12px 0;color:#dc3545;text-decoration:none;font-size:13px}
+a.back:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+<header>
+<h1>🔴 L3 段考模式刷題</h1>
+<p>Bloom L1-L3 ｜ 南一版七年級下學期</p>
+</header>
+<div class="app">
+<a class="back" href="index.html">← 返回學習中心</a>
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+<div id="content"></div>
+</div>
+<script>
+const EXERCISES=[
+{id:'q01',bl:1,blabel:'Remember',src:'textbook',type:'mc',q:'I _______ Vera well at her new school life.',opts:['knock','mark','celebrate','wish'],ans:3,why:'wish 祝；希望。I wish Vera well = 我祝 Vera 順利。',color:'#6366f1'},
+{id:'q02',bl:1,blabel:'Remember',src:'textbook',type:'mc',q:'Mom: _______ your hands before you eat.',opts:['Celebrate','Wish','Wash','Mark'],ans:2,why:'Wash your hands = 洗手。',color:'#6366f1'},
+{id:'q03',bl:1,blabel:'Remember',src:'textbook',type:'mc',q:'The garden looks very _______. There are red, yellow, and blue flowers.',opts:['colorful','large','other','busy'],ans:0,why:'colorful 繽紛的。',color:'#6366f1'},
+{id:'q04',bl:1,blabel:'Remember',src:'textbook',type:'mc',q:'The weather in Taiwan is cold _______ December and January.',opts:['in','on','at','about'],ans:0,why:'月份前用 in。',color:'#6366f1'},
+{id:'q05',bl:1,blabel:'Remember',src:'designed',type:'mc',q:'There are twelve _______ in a year.',opts:['dates','months','festivals','weeks'],ans:1,why:'一年有十二個月 (months)。',color:'#6366f1'},
+{id:'q06',bl:1,blabel:'Remember',src:'designed',type:'fill',q:"Teacher's Day is in _______.",ans:'September',why:'台灣教師節在九月。',color:'#6366f1'},
+{id:'q07',bl:2,blabel:'Understand',src:'textbook',type:'mc',q:"Judy's concert is _______ August 14.",opts:['about','at','in','on'],ans:3,why:'特定日期前用 on。',color:'#8b5cf6'},
+{id:'q08',bl:2,blabel:'Understand',src:'textbook',type:'mc',q:"Hank: _______ is Christmas? Lulu: It's on December 25.",opts:['When','What','What day','How'],ans:0,why:'When 詢問時間。',color:'#8b5cf6'},
+{id:'q09',bl:2,blabel:'Understand',src:'textbook',type:'mc',q:"Today is the last day of January. It's January _______.",opts:['thirty','thirteen','thirty-one','thirty-first'],ans:3,why:'日期用序數 thirty-first。',color:'#8b5cf6'},
+{id:'q10',bl:2,blabel:'Understand',src:'designed',type:'mc',q:"Anna: What's the _______ today? Vic: It's July 18.",opts:['day','date','time','month'],ans:1,why:'date 問幾號。day 問星期幾。',color:'#8b5cf6'},
+{id:'q11',bl:2,blabel:'Understand',src:'designed',type:'mc',q:'為什麼 Yash 要向王老師請假十天？',opts:['他生病了','他要回印度過侯麗節','他要去旅遊','他的家人要來台灣'],ans:1,why:"對話中 Yash 說 I'm going back to India for Holi.",color:'#8b5cf6'},
+{id:'q12',bl:2,blabel:'Understand',src:'designed',type:'mc',q:'各國新年慶祝的兩個共同點是什麼？',opts:['都在一月慶祝','都用水慶祝','標誌新開始並帶來歡樂','都穿特殊服裝'],ans:2,why:'They mark a new start and bring joy for all.',color:'#8b5cf6'},
+{id:'q13',bl:3,blabel:'Apply',src:'textbook',type:'fill',q:'How do people in the USA _______ the New Year?',ans:'celebrate',why:'celebrate 慶祝。',color:'#3b82f6'},
+{id:'q14',bl:3,blabel:'Apply',src:'textbook',type:'fill',q:'Chinese New Year is my favorite _______.',ans:'holiday',why:'holiday 假期；節日。',color:'#3b82f6'},
+{id:'q15',bl:3,blabel:'Apply',src:'designed',type:'fill',q:"When is the basketball game? It's on March _______.",ans:'twentieth',why:'20 的序數 = twentieth。',color:'#3b82f6'},
+{id:'q16',bl:3,blabel:'Apply',src:'designed',type:'fill',q:"What's the date of Henry's birthday? It's _______ January seventeenth.",ans:'on',why:'特定日期前用 on。',color:'#3b82f6'},
+{id:'q17',bl:3,blabel:'Apply',src:'designed',type:'mc',q:'你想問「母親節是什麼時候？」應該說：',opts:["What is Mother's Day?","How is Mother's Day?","When is Mother's Day?","Where is Mother's Day?"],ans:2,why:'When is...? 詢問日期。',color:'#3b82f6'},
+{id:'q18',bl:3,blabel:'Apply',src:'designed',type:'fill',q:'We also _______ it the festival of colors.',ans:'call',why:'call A B = 稱 A 為 B。',color:'#3b82f6'},
+];
+let idx=0,score=0,wrong=[];
+function render(){
+if(idx>=EXERCISES.length){showResult();return}
+const e=EXERCISES[idx];
+document.getElementById('bar').style.width=(idx/EXERCISES.length*100)+'%';
+let h=`<div class="qcard"><div class="qhead"><span class="qnum">第 ${idx+1} 題</span><span class="bloom-badge" style="background:${e.color}">L${e.bl} ${e.blabel}</span><span class="src-badge">${e.src==='designed'?'新設計':'課本'}</span></div><div class="qtext">${e.q}</div>`;
+if(e.type==='mc'){h+=e.opts.map((o,i)=>`<button class="quiz-option" onclick="check(${i})" data-i="${i}">${String.fromCharCode(65+i)}. ${o}</button>`).join('')}
+else{h+=`<div style="text-align:center"><input class="fill-input" id="fillInp" placeholder="輸入答案" onkeydown="if(event.key==='Enter')checkFill()"><button class="btn btn-primary" style="margin-left:8px;padding:8px 16px" onclick="checkFill()">確認</button></div>`}
+h+=`<div class="fb" id="fb"><div class="fb-title">💡 解析</div><p id="fbText"></p><div class="flex-center" style="margin-top:12px"><button class="btn btn-primary" onclick="nextQuestion()">下一題 ➔</button></div></div></div>`;
+document.getElementById('content').innerHTML=h;
+if(e.type==='fill')setTimeout(()=>{const el=document.getElementById('fillInp');if(el)el.focus()},100);
+}
+function check(i){
+const e=EXERCISES[idx];
+document.querySelectorAll('.quiz-option').forEach((b,j)=>{b.disabled=true;if(j===e.ans)b.classList.add('correct')});
+if(i===e.ans)score++;else{document.querySelectorAll('.quiz-option')[i].classList.add('wrong');wrong.push(e)}
+document.getElementById('fbText').textContent=e.why;
+document.getElementById('fb').classList.add('show');
+}
+function checkFill(){
+const e=EXERCISES[idx],inp=document.getElementById('fillInp'),v=inp.value.trim();
+if(!v)return;
+if(v.toLowerCase()===e.ans.toLowerCase()){inp.classList.add('correct');score++}
+else{inp.classList.add('wrong');wrong.push(e)}
+document.getElementById('fbText').textContent=e.why+(v.toLowerCase()!==e.ans.toLowerCase()?' 正確答案：'+e.ans:'');
+document.getElementById('fb').classList.add('show');
+}
+function nextQuestion(){
+idx++;render();
+}
+function showResult(){
+document.getElementById('bar').style.width='100%';
+const pct=Math.round(score/EXERCISES.length*100);
+let h=`<div class="score-box"><div class="score">${pct}%</div><p>${score} / ${EXERCISES.length} 答對</p></div>`;
+if(wrong.length){h+='<div class="wrong-list"><h3 style="margin:10px 0 6px;font-size:14px">❌ 錯題複習</h3>';wrong.forEach(e=>{h+=`<div class="wrong-item"><span class="bloom-badge" style="background:${e.color};margin-right:6px">L${e.bl}</span><strong>${e.q}</strong><br>💡 ${e.why}</div>`});h+='</div>'}
+h+='<div class="flex-center"><button class="btn btn-primary" onclick="idx=0;score=0;wrong=[];render()">🔄 重新測驗</button><a href="index.html" class="btn btn-reset">返回學習中心</a></div>';
+document.getElementById('content').innerHTML=h;
+}
+render();
+</script>
+</body>
+</html>

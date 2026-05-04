@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3 會考模式刷題</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Microsoft JhengHei',sans-serif;background:#eff6ff;color:#1a1a2e;line-height:1.6}
+.app{max-width:680px;margin:0 auto;padding:0 12px 80px}
+header{background:linear-gradient(135deg,#1e40af,#1e3a8a);color:#fff;padding:16px;border-radius:0 0 16px 16px;margin-bottom:16px;text-align:center}
+header h1{font-size:18px}header p{font-size:13px;opacity:.85;margin-top:4px}
+.section-title{font-size:15px;font-weight:700;color:#1e40af;margin:20px 0 10px;padding:8px 12px;background:#dbeafe;border-radius:8px}
+.progress{height:6px;background:#bfdbfe;border-radius:3px;margin:12px 0;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#1e40af,#60a5fa);border-radius:3px;transition:width .4s}
+.qcard{background:#fff;border-radius:14px;padding:18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #bfdbfe}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.qnum{font-size:13px;color:#888;font-weight:600}
+.bloom-badge{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:#fff}
+.src-badge{padding:2px 8px;border-radius:6px;font-size:11px;background:#eff6ff;color:#1e40af;border:1px solid #bfdbfe}
+.qtext{font-size:15px;font-weight:600;margin-bottom:12px}
+.quiz-option{display:block;width:100%;text-align:left;padding:12px 16px;margin:6px 0;border:2px solid #bfdbfe;border-radius:10px;background:#fff;font-size:14px;cursor:pointer;transition:all .2s}
+.quiz-option:hover{border-color:#1e40af;background:#eff6ff}
+.quiz-option.correct{border-color:#22c55e;background:#f0fdf4;color:#166534}
+.quiz-option.wrong{border-color:#ef4444;background:#fef2f2;color:#991b1b}
+.quiz-option:disabled{cursor:default}
+.fb{display:none;margin-top:12px;padding:12px;background:#f8fafb;border-radius:10px;border-left:3px solid #1e40af;font-size:13px}
+.fb.show{display:block;animation:fadeIn .3s}
+.fb-title{font-weight:700;color:#1e40af;margin-bottom:6px}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.passage{background:#f8fafc;border-radius:10px;padding:14px;margin-bottom:12px;font-size:14px;line-height:1.8;border:1px solid #e2e8f0}
+.score-box{text-align:center;padding:24px;background:linear-gradient(135deg,#eff6ff,#fff);border-radius:14px;margin:16px 0;border:1px solid #bfdbfe}
+.score-box .score{font-size:48px;font-weight:700;color:#1e40af}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;transition:all .2s}
+.btn-primary{background:#1e40af;color:#fff}.btn-primary:hover{background:#1e3a8a}
+.btn-reset{background:#f1f5f9;color:#64748b}
+.flex-center{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.wrong-item{background:#eff6ff;border-radius:8px;padding:10px;margin:6px 0;font-size:13px}
+.open-area textarea{width:100%;min-height:100px;padding:12px;border:2px solid #bfdbfe;border-radius:10px;font-size:14px;font-family:inherit;resize:vertical}
+.sample{background:#f0fdf4;padding:12px;border-radius:8px;margin:8px 0;font-size:13px;white-space:pre-line}
+.checklist{font-size:13px;padding-left:20px;margin:8px 0}
+a.back{display:inline-block;margin:12px 0;color:#1e40af;text-decoration:none;font-size:13px}
+.img-box{text-align:center;margin:10px 0;}
+.img-box img{max-width:100%;border-radius:8px;border:1px solid #cbd5e1;}
+</style>
+</head>
+<body>
+<header>
+<h1>🔵 L3 會考模式刷題</h1>
+<p>仿會考題型 ｜ Bloom L2-L6 ｜ 含圖表與閱讀題組</p>
+</header>
+<div class="app">
+<a class="back" href="index.html">← 返回學習中心</a>
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+<div id="content"></div>
+</div>
+<script>
+const EX=[
+// ── 一、單題（仿會考第 1-15 題：無中文提示）──
+{id:'c01',bl:2,blabel:'Understand',sec:'單題',q:'George throws _______ the powder on his car.',opts:['(A) in','(B) with','(C) of','(D) at'],ans:2,why:"throw...of 不合理，但 throw at = 朝……丟。答案 (C) of 考語意搭配。注意：throws...off 是甩掉。本題照習作原文 throw of → 應選 (C)。",color:'#06b6d4'},
+{id:'c02',bl:2,blabel:'Understand',sec:'單題',q:'My father washes _______ the sofa.',opts:['(A) in','(B) on','(C) for','(D) at'],ans:3,why:'at 搭配位置。但此題考 wash 的用法。wash at the sofa → 正確理解為在沙發旁洗東西。',color:'#06b6d4'},
+{id:'c03',bl:2,blabel:'Understand',sec:'單題',q:'My grandmother prays _______ good luck every morning.',opts:['(A) on','(B) at','(C) for','(D) around'],ans:2,why:'pray for = 祈求。pray for good luck = 祈求好運。',color:'#06b6d4'},
+{id:'c04',bl:2,blabel:'Understand',sec:'單題',q:'Christmas is just _______ the corner.',opts:['(A) for','(B) off','(C) around','(D) under'],ans:2,why:'just around the corner = 即將到來。固定片語。',color:'#06b6d4'},
+{id:'c05',bl:2,blabel:'Understand',sec:'單題',q:'The twins（雙胞胎）are born _______ the same date.',opts:['(A) in','(B) on','(C) at','(D) for'],ans:1,why:'on + 特定日期。born on the same date = 在同一天出生。',color:'#06b6d4'},
+{id:'c06',bl:3,blabel:'Apply',sec:'單題',q:'Peter: What is the date today? Mary: It\'s _______ November eleventh.',opts:['(A) on','(B) at','(C) in','(D) ×'],ans:3,why:"回答 What's the date 時，It's + 日期，不需介系詞。It's November eleventh. (D) 不加介系詞。",color:'#3b82f6'},
+{id:'c07',bl:3,blabel:'Apply',sec:'單題',q:'Peter: When is the meeting? Mary: It\'s _______ November eleventh.',opts:['(A) on','(B) at','(C) in','(D) ×'],ans:0,why:'回答 When is...? → It\'s on + 特定日期。注意與上題的差異！',color:'#3b82f6'},
+{id:'c08',bl:3,blabel:'Apply',sec:'單題',q:'Susan: What _______ is it today? Benny: It\'s April seventh.',opts:['(A) time','(B) day','(C) date','(D) day ; ×'],ans:2,why:'問幾月幾號用 What date / What\'s the date。day 是問星期幾。',color:'#3b82f6'},
+
+// ── 二、對話題（仿會考對話理解）──
+{id:'c09',bl:3,blabel:'Apply',sec:'對話題',q:'Cindy: _______ is it today?\nSue: It\'s March third.',opts:['(A) What day','(B) What date','(C) What time','(D) What'],ans:1,why:'回答是日期 March third → 問的是 What date。',color:'#3b82f6'},
+{id:'c10',bl:3,blabel:'Apply',sec:'對話題',q:"Judy: What is the date of the meeting?\nSmith: It is _______ May tenth.",opts:['(A) in','(B) on','(C) at','(D) ×'],ans:0,why:'What is the date of...? 回答不需 on。It is May tenth. 但如果問 When → 需用 on。此題答 (A) × 不加介系詞。',color:'#3b82f6'},
+
+// ── 三、圖表與克漏字題組（仿會考）──
+{id:'c11',bl:2,blabel:'Understand',sec:'圖表理解',img:'../S__125296649_0.jpg',q:'Look at the picture. What is the boy doing?<br><br>👦🚪✊',opts:['(A) He is knocking on the door.','(B) He is carrying powders.','(C) He is having powders.','(D) He is wearing colorful costume.'],ans:0,why:'圖片中男孩的手正敲擊門，knock on the door 符合情境。',color:'#06b6d4'},
+{id:'c12',bl:4,blabel:'Analyze',sec:'克漏字',img:'../S__125296650_0.jpg',q:'<div class="passage">Ian: Is this card for your dad?<br>Peter: Yes.<br>Ian: Is his birthday coming?<br>Peter: No. His birthday is (1) September 15. It\'s months away. It\'s a Father\'s Day card.<br>Ian: Isn\'t Father\'s Day in (2)? It\'s months away, too. It\'s (3) June 10 today.<br>Peter: Not really. Father\'s Day is on (4) Sunday of June in Canada. It\'s on June (5) this year.<br>Ian: I see.</div>\n請問 (1) 該填入什麼？',opts:['(A) on','(B) in','(C) at','(D) ×'],ans:0,why:'September 15 是特定日期，所以要用介系詞 on。',color:'#8b5cf6'},
+{id:'c13',bl:4,blabel:'Analyze',sec:'克漏字',img:'../S__125296650_0.jpg',q:'<div class="passage">Ian: Is this card for your dad?<br>Peter: Yes.<br>Ian: Is his birthday coming?<br>Peter: No. His birthday is (1) September 15. It\'s months away. It\'s a Father\'s Day card.<br>Ian: Isn\'t Father\'s Day in (2)? It\'s months away, too. It\'s (3) June 10 today.<br>Peter: Not really. Father\'s Day is on (4) Sunday of June in Canada. It\'s on June (5) this year.<br>Ian: I see.</div>\n請問 (2) 該填入什麼？（提示：台灣父親節）',opts:['(A) August 8','(B) August','(C) Sunday','(D) the weekend'],ans:1,why:'Ian 說在幾月份，因為介系詞是 in，所以只能接月份 August。不能接 August 8，因為那需要用 on。',color:'#8b5cf6'},
+{id:'c14',bl:4,blabel:'Analyze',sec:'克漏字',img:'../S__125296650_0.jpg',q:'<div class="passage">Ian: Is this card for your dad?<br>Peter: Yes.<br>Ian: Is his birthday coming?<br>Peter: No. His birthday is (1) September 15. It\'s months away. It\'s a Father\'s Day card.<br>Ian: Isn\'t Father\'s Day in (2)? It\'s months away, too. It\'s (3) June 10 today.<br>Peter: Not really. Father\'s Day is on (4) Sunday of June in Canada. It\'s on June (5) this year.<br>Ian: I see.</div>\n請問 (3) 該填入什麼？',opts:['(A) ×','(B) on','(C) in','(D) at'],ans:0,why:'「今天是六月十日」(It\'s June 10 today.)，直接接日期即可，不需要加介系詞。',color:'#8b5cf6'},
+{id:'c15',bl:4,blabel:'Analyze',sec:'克漏字',img:'../S__125296650_0.jpg',q:'<div class="passage">Ian: Is this card for your dad?<br>Peter: Yes.<br>Ian: Is his birthday coming?<br>Peter: No. His birthday is (1) September 15. It\'s months away. It\'s a Father\'s Day card.<br>Ian: Isn\'t Father\'s Day in (2)? It\'s months away, too. It\'s (3) June 10 today.<br>Peter: Not really. Father\'s Day is on (4) Sunday of June in Canada. It\'s on June (5) this year.<br>Ian: I see.</div>\n請問 (4) 該填入什麼？',opts:['(A) three','(B) third','(C) the three','(D) the third'],ans:3,why:'「六月的第三個星期日」，表示順序必須用 the + 序數，因此是 the third。',color:'#8b5cf6'},
+{id:'c16',bl:4,blabel:'Analyze',sec:'克漏字',img:'../S__125296650_0.jpg',q:'<div class="passage">Ian: Is this card for your dad?<br>Peter: Yes.<br>Ian: Is his birthday coming?<br>Peter: No. His birthday is (1) September 15. It\'s months away. It\'s a Father\'s Day card.<br>Ian: Isn\'t Father\'s Day in (2)? It\'s months away, too. It\'s (3) June 10 today.<br>Peter: Not really. Father\'s Day is on (4) Sunday of June in Canada. It\'s on June (5) this year.<br>Ian: I see.</div>\n請問 (5) 該填入什麼？（提示：今天是 June 10）',opts:['(A) nineteen','(B) nineteenth','(C) the nineteen','(D) the nineteenth'],ans:1,why:'特定日期「六月十九日」必須用序數 nineteenth，由於前面已經有 June，不需加 the。',color:'#8b5cf6'},
+
+// ── 四、閱讀理解（仿會考閱讀題組）──
+{id:'c17',bl:4,blabel:'Analyze',sec:'閱讀理解',img:'../S__125296651_0.jpg',q:'<div class="passage">Kevin: What are you doing, Mary?<br>Mary: I\'m making a card for my mom. You know, Mother\'s Day is coming.<br>Kevin: So early! It\'s not even May yet. But your card is very beautiful.<br>Mary: Thanks! What about you? Do you prepare anything for your mother?<br>Kevin: My sister and I want to buy carnations, clothes, and a cake for her. We plan to have a party for her on the special day.<br>Mary: That\'s great. She will be happy about it. By the way, you can also make her a card. It\'s an easy way to show your love to your mother.<br>Kevin: But I am not good at making things.</div>\nWhen may this dialogue happen?',opts:['(A) In April.','(B) In May.','(C) In June.','(D) In July.'],ans:0,why:'Kevin 說 "It\'s not even May yet." (甚至還沒到五月)，表示對話發生在五月之前，即四月。',color:'#8b5cf6'},
+{id:'c18',bl:4,blabel:'Analyze',sec:'閱讀理解',img:'../S__125296651_0.jpg',q:'<div class="passage">Kevin: What are you doing, Mary?<br>Mary: I\'m making a card for my mom. You know, Mother\'s Day is coming.<br>Kevin: So early! It\'s not even May yet. But your card is very beautiful.<br>Mary: Thanks! What about you? Do you prepare anything for your mother?<br>Kevin: My sister and I want to buy carnations, clothes, and a cake for her. We plan to have a party for her on the special day.<br>Mary: That\'s great. She will be happy about it. By the way, you can also make her a card. It\'s an easy way to show your love to your mother.<br>Kevin: But I am not good at making things.</div>\nWhat will Mary give to her mom?',opts:['(A) A carnation.','(B) A card.','(C) A cake.','(D) Clothes.'],ans:1,why:'Mary 在對話一開始說 "I\'m making a card for my mom."。康乃馨、蛋糕、衣服是 Kevin 要準備的。',color:'#8b5cf6'},
+{id:'c19',bl:4,blabel:'Analyze',sec:'閱讀理解',img:'../S__125296652_0.jpg',q:'<div class="passage"><b>Timetables of four theaters</b><br>Fox Theater: <i>Brain on Fire</i> (Aug 12 - Aug 21)<br>Bear Theater: <i>Despicable Me 3</i> (Aug 1 - Aug 9)<br>Elephant Theater: <i>The Zookeeper\'s Wife</i> (July 28 - Aug 4)<br>Horse Theater: <i>Wonder Woman</i> (Aug 14 - Aug 23)</div>\nToday is Father\'s Day in Taiwan. Sarah and Philip want to see a movie. Which movie can they see?',opts:['(A) Brain on Fire.','(B) Despicable Me 3.','(C) The Zookeeper\'s Wife.','(D) Wonder Woman.'],ans:1,why:'台灣的父親節是 8 月 8 日。對照時刻表，只有 Bear Theater (8/1-8/9) 在放映，也就是 Despicable Me 3。',color:'#8b5cf6'},
+{id:'c19_2',bl:4,blabel:'Analyze',sec:'閱讀理解',img:'../S__125296652_0.jpg',q:'<div class="passage"><b>Timetables of four theaters</b><br>Fox Theater: <i>Brain on Fire</i> (Aug 12 - Aug 21)<br>Bear Theater: <i>Despicable Me 3</i> (Aug 1 - Aug 9)<br>Elephant Theater: <i>The Zookeeper\'s Wife</i> (July 28 - Aug 4)<br>Horse Theater: <i>Wonder Woman</i> (Aug 14 - Aug 23)</div>\nToday is July thirtieth. Oliver wants to see a movie. Which movie can he see?',opts:['(A) Brain on Fire.','(B) Despicable Me 3.','(C) The Zookeeper\'s Wife.','(D) Wonder Woman.'],ans:2,why:'July thirtieth 是 7 月 30 日，落在 Elephant Theater (7/28-8/4) 的放映期間，電影為 The Zookeeper\'s Wife。',color:'#8b5cf6'},
+{id:'c19_3',bl:4,blabel:'Analyze',sec:'閱讀理解',img:'../S__125296652_0.jpg',q:'<div class="passage"><b>Timetables of four theaters</b><br>Fox Theater: <i>Brain on Fire</i> (Aug 12 - Aug 21)<br>Bear Theater: <i>Despicable Me 3</i> (Aug 1 - Aug 9)<br>Elephant Theater: <i>The Zookeeper\'s Wife</i> (July 28 - Aug 4)<br>Horse Theater: <i>Wonder Woman</i> (Aug 14 - Aug 23)</div>\nToday is August seventeenth. Jake usually has dinner at 6:30 p.m. He wants to see a movie after dinner. Which movie can he see?',opts:['(A) Brain on Fire.','(B) Despicable Me 3.','(C) The Zookeeper\'s Wife.','(D) Wonder Woman.'],ans:3,why:'August 17 只有 Fox Theater 和 Horse Theater 有放映。Jake 6:30 吃晚餐，所以要看更晚的電影。Fox 最晚只有 6:00 p.m.。Horse 在 8:30 p.m. 有 Wonder Woman，符合 after dinner。',color:'#8b5cf6'},
+
+// ── 五、高層次題（Bloom L5-L6）──
+{id:'c20',bl:5,blabel:'Evaluate',sec:'高層次',q:'比較 What\'s the date? 和 When is the party? 的差異。哪個情境該用哪句？請用英文說明。',type:'open',sample:"What's the date? → asks for today's date (month + day).\nWhen is the party? → asks for the time of a specific event.\nUse 'What's the date' when you don't know today's date. Use 'When is' when asking about a future event.",focus:['區分兩句用途','舉出適用情境','英文表達'],tip:'母語人士常說 What\'s today\'s date? 比 What is the date today 更口語。',color:'#ec4899'},
+{id:'c21',bl:5,blabel:'Evaluate',sec:'高層次',q:'找出以下段落的錯誤並改正：\n"My birthday is in May 15. I celebrate them with my family. We have a big party in the park."',type:'open',sample:"Error 1: 'in May 15' → 'on May 15th' (specific date uses 'on' + ordinal).\nError 2: 'them' → 'it' (birthday is singular).",focus:['in→on 介系詞錯誤','15→15th 序數','them→it 代名詞'],tip:'特定日期一定用 on；月份才用 in。',color:'#ec4899'},
+{id:'c22',bl:6,blabel:'Create',sec:'高層次',q:'你遇到來自泰國的交換生 Nida，互相介紹節日。寫 5-6 句英文對話，使用 When is / call A B / celebrate / wash away。',type:'open',sample:"You: Hi Nida! When is Songkran?\nNida: It's on April 13th. We call it the water festival.\nYou: How do you celebrate it?\nNida: We have big water fights! Water can wash away bad luck.\nYou: That's cool! In Taiwan, we celebrate Chinese New Year in January or February.\nNida: I'd love to try that!",focus:['When is 句型','call A B','wash away','至少5句','文化交流'],tip:'母語人士用 That\'s cool! / I\'d love to try that! 回應更自然。',color:'#f59e0b'},
+];
+let idx=0,score=0,wrong=[],curSec='';
+function render(){
+if(idx>=EX.length){showResult();return}
+const e=EX[idx];
+document.getElementById('bar').style.width=(idx/EX.length*100)+'%';
+let secH='';
+if(e.sec!==curSec){curSec=e.sec;secH=`<div class="section-title">${getSectionIcon(e.sec)} ${e.sec}</div>`}
+let h=secH+`<div class="qcard"><div class="qhead"><span class="qnum">第 ${idx+1}/${EX.length} 題</span><span class="bloom-badge" style="background:${e.color}">L${e.bl} ${e.blabel}</span></div>`;
+if(e.img) h+=`<div class="img-box"><img src="${e.img}"></div>`;
+h+=`<div class="qtext">${e.q.replace(/\n/g,'<br>')}</div>`;
+if(e.type==='open'){h+=`<div class="open-area"><textarea id="openInp" placeholder="用英文作答..."></textarea></div><div class="flex-center"><button class="btn btn-primary" onclick="showOpen()">提交答案</button></div>`}
+else if(e.type==='fill'){h+=`<div style="text-align:center"><input class="fill-input" id="fillInp" placeholder="答案" onkeydown="if(event.key==='Enter')checkFill()"><button class="btn btn-primary" style="margin-left:8px;padding:8px 16px" onclick="checkFill()">確認</button></div>`}
+else{h+=e.opts.map((o,i)=>`<button class="quiz-option" onclick="check(${i})">${o}</button>`).join('')}
+h+=`<div class="fb" id="fb"><div class="fb-title">💡 解析</div><div id="fbText"></div><div class="flex-center" style="margin-top:12px"><button class="btn btn-primary" onclick="nextQuestion()">下一題 ➔</button></div></div></div>`;
+document.getElementById('content').innerHTML=h;
+if(e.type==='fill')setTimeout(()=>{const el=document.getElementById('fillInp');if(el)el.focus()},100);
+}
+function getSectionIcon(s){return{'單題':'📝','圖表理解':'📊','對話題':'💬','克漏字':'📖','閱讀理解':'📄','高層次':'🎯'}[s]||'📌'}
+function check(i){
+const e=EX[idx];
+document.querySelectorAll('.quiz-option').forEach((b,j)=>{b.disabled=true;if(j===e.ans)b.classList.add('correct')});
+if(i===e.ans)score++;else{document.querySelectorAll('.quiz-option')[i].classList.add('wrong');wrong.push(e)}
+document.getElementById('fbText').innerHTML=e.why;
+document.getElementById('fb').classList.add('show');
+}
+function checkFill(){
+const e=EX[idx],inp=document.getElementById('fillInp'),v=inp.value.trim();
+if(!v)return;
+if(v.toLowerCase()===e.ans.toLowerCase()){inp.classList.add('correct');score++}else{inp.classList.add('wrong');wrong.push(e)}
+document.getElementById('fbText').innerHTML=e.why+(v.toLowerCase()!==e.ans.toLowerCase()?' 正確答案：'+e.ans:'');
+document.getElementById('fb').classList.add('show');
+}
+function showOpen(){
+const e=EX[idx];score++;
+let html=`<p style="font-weight:600;margin-bottom:8px">📖 參考答案（sample_answer）：</p><div class="sample">${e.sample}</div>`;
+html+=`<p style="font-weight:600;margin:10px 0 6px">✅ 自評清單（grading_focus）：</p><ul class="checklist">`;
+e.focus.forEach(f=>{html+=`<li>□ ${f}</li>`});
+html+=`</ul>`;
+if(e.tip)html+=`<p style="font-size:13px;color:#1e40af;margin-top:8px;padding:8px;background:#eff6ff;border-radius:8px">🗣️ ${e.tip}</p>`;
+document.getElementById('fbText').innerHTML=html;
+document.getElementById('fb').classList.add('show');
+}
+function nextQuestion(){
+idx++;render();
+}
+function showResult(){
+document.getElementById('bar').style.width='100%';curSec='';
+const pct=Math.round(score/EX.length*100);
+let h=`<div class="score-box"><div class="score">${pct}%</div><p>${score} / ${EX.length}</p></div>`;
+if(wrong.length){h+='<div style="margin-top:14px"><h3 style="font-size:14px">❌ 錯題複習</h3>';wrong.forEach(e=>{h+=`<div class="wrong-item"><span class="bloom-badge" style="background:${e.color}">L${e.bl}</span> ${e.q.replace(/<br>/g,'').substring(0,60)}...<br>💡 ${e.why}</div>`});h+='</div>'}
+h+='<div class="flex-center"><button class="btn btn-primary" onclick="idx=0;score=0;wrong=[];curSec=\'\';render()">🔄 重新測驗</button><a href="index.html" class="btn btn-reset">返回學習中心</a></div>';
+document.getElementById('content').innerHTML=h;
+}
+render();
+</script>
+</body>
+</html>

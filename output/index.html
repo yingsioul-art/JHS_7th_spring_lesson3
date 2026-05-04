@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3 英文學習中心</title>
+<meta name="description" content="南一版七年級下學期 Lesson 3 How Do You Celebrate the New Year? 互動學習系統">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Microsoft JhengHei',sans-serif;background:linear-gradient(135deg,#f0fdfa 0%,#ecfeff 50%,#eff6ff 100%);color:#1a1a2e;line-height:1.6;min-height:100vh}
+.app{max-width:680px;margin:0 auto;padding:0 12px 80px}
+header{background:linear-gradient(135deg,#0d9488,#0f766e,#1e40af);color:#fff;padding:24px 16px;border-radius:0 0 20px 20px;margin-bottom:20px;text-align:center;position:relative;overflow:hidden}
+header::after{content:'';position:absolute;top:-50%;right:-20%;width:200px;height:200px;background:rgba(255,255,255,.08);border-radius:50%}
+header h1{font-size:20px;font-weight:700;position:relative}
+header p{font-size:13px;opacity:.85;margin-top:4px;position:relative}
+.subtitle{font-size:12px;opacity:.7;margin-top:8px;position:relative}
+.path{display:flex;flex-direction:column;gap:12px;margin:16px 0}
+.path-card{display:flex;align-items:center;gap:14px;background:#fff;border-radius:14px;padding:16px;box-shadow:0 2px 12px rgba(0,0,0,.06);cursor:pointer;transition:all .2s;border:2px solid transparent;text-decoration:none;color:inherit}
+.path-card:hover{transform:translateY(-2px);box-shadow:0 4px 16px rgba(0,0,0,.12)}
+.path-card.locked{opacity:.5;cursor:not-allowed;filter:grayscale(.3)}
+.path-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.path-info{flex:1}
+.path-info h3{font-size:15px;font-weight:600}
+.path-info p{font-size:12px;color:#888;margin-top:2px}
+.path-status{font-size:20px}
+.section{background:#fff;border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.section h2{font-size:16px;font-weight:700;color:#0d9488;margin-bottom:12px}
+.diag-start{text-align:center;padding:20px}
+.quiz-option{display:block;width:100%;text-align:left;padding:12px 16px;margin:6px 0;border:2px solid #e0e7ff;border-radius:10px;background:#fff;font-size:14px;cursor:pointer;transition:all .2s}
+.quiz-option:hover{border-color:#0d9488;background:#f0fdfa}
+.quiz-option.correct{border-color:#22c55e;background:#f0fdf4;color:#166534}
+.quiz-option.wrong{border-color:#ef4444;background:#fef2f2;color:#991b1b}
+.quiz-option:disabled{cursor:default}
+.progress{height:6px;background:#e5e7eb;border-radius:3px;margin:12px 0;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#0d9488,#22c55e);border-radius:3px;transition:width .4s}
+.score-box{text-align:center;padding:20px;background:linear-gradient(135deg,#f0fdf4,#ecfdf5);border-radius:14px;margin:16px 0}
+.score-box .score{font-size:48px;font-weight:700;color:#0d9488}
+.weakness{margin:12px 0}
+.weakness-item{display:flex;align-items:center;gap:10px;padding:10px;margin:6px 0;border-radius:10px;background:#f8fafc;border:1px solid #e2e8f0}
+.weakness-bar{flex:1;height:8px;background:#e5e7eb;border-radius:4px;overflow:hidden}
+.weakness-fill{height:100%;border-radius:4px;transition:width .4s}
+.weakness-pct{font-size:13px;font-weight:600;width:40px;text-align:right}
+.weakness-tag{font-size:12px;width:120px}
+.rec{font-size:13px;padding:10px;background:#f0fdfa;border-radius:8px;margin:8px 0;border-left:3px solid #0d9488}
+.rec a{color:#0d9488;font-weight:600}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;transition:all .2s}
+.btn-primary{background:#0d9488;color:#fff}.btn-primary:hover{background:#0f766e}
+.btn-reset{background:#f1f5f9;color:#64748b}
+.flex-center{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.bloom-badge{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:#fff;display:inline-block}
+.fb{display:none;margin-top:8px;padding:10px;background:#f8fafb;border-radius:8px;border-left:3px solid #0d9488;font-size:13px}
+.fb.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.reset-all{text-align:center;margin:20px 0;font-size:12px}
+.reset-all button{background:none;border:none;color:#888;cursor:pointer;text-decoration:underline;font-size:12px}
+</style>
+</head>
+<body>
+<header>
+<h1>📚 L3 英文學習中心</h1>
+<p>How Do You Celebrate the New Year?</p>
+<div class="subtitle">南一版 七年級下學期 ｜ 互動學習系統</div>
+</header>
+<div class="app">
+<div class="path" id="pathCards"></div>
+<div class="section" id="diagSection" style="display:none">
+<h2>🧪 綜合診斷</h2>
+<div id="diagContent"></div>
+</div>
+<div class="section" id="weakSection" style="display:none">
+<h2>📊 弱點分析</h2>
+<div id="weakContent"></div>
+</div>
+<div class="reset-all"><button onclick="resetAll()">🔄 重置所有進度</button></div>
+</div>
+<script>
+const PATHS=[
+{id:'learn',icon:'📚',color:'#0d9488',bg:'#f0fdfa',name:'課程學習',desc:'單字卡 / 對話 / 課文 / 文法',href:'lesson_v5.html'},
+{id:'bloom',icon:'🪜',color:'#8b5cf6',bg:'#f5f3ff',name:'Bloom 六層次練習',desc:'從記憶到創造的階梯式練習',href:'L3_bloom_practice.html'},
+{id:'dialogue',icon:'🗣️',color:'#ea580c',bg:'#fff7ed',name:'對話應用練習 ⭐',desc:'與母語人士對談的實戰訓練',href:'L3_dialogue_practice.html'},
+{id:'midterm',icon:'🔴',color:'#dc3545',bg:'#fef2f2',name:'段考模式刷題',desc:'Bloom L1-L3 ｜ 18 題',href:'L3_midterm_quiz.html'},
+{id:'cap',icon:'🔵',color:'#1e40af',bg:'#eff6ff',name:'會考模式刷題',desc:'仿會考題型 ｜ Bloom L2-L6',href:'L3_cap_quiz.html'},
+{id:'focus',icon:'🎯',color:'#7c3aed',bg:'#f5f3ff',name:'聚焦複習',desc:'按題型與標籤分組刷題',href:'L3_focus_practice.html'},
+];
+const DIAG_QS=[
+{q:'I _______ Vera well.',opts:['knock','mark','celebrate','wish'],ans:3,bl:1,tag:'vocab'},
+{q:"Judy's concert is _______ August 14.",opts:['about','at','in','on'],ans:3,bl:2,tag:'grammar-preposition'},
+{q:"It's January _______. (最後一天)",opts:['thirty','thirty-one','thirty-first','thirtieth'],ans:2,bl:2,tag:'grammar-ordinal'},
+{q:'five → _______',opts:['fiveth','fivth','fifth','firth'],ans:2,bl:3,tag:'grammar-ordinal'},
+{q:'_______ is Christmas?',opts:['What','When','Where','How'],ans:1,bl:2,tag:'grammar-when'},
+{q:'Christmas is just _______ the corner.',opts:['for','off','around','under'],ans:2,bl:3,tag:'idiom'},
+{q:'People _______ their New Year Songkran.',opts:['name','say','call','talk'],ans:2,bl:2,tag:'vocab'},
+{q:'Water can _______ away bad luck.',opts:['wash','wish','watch','walk'],ans:0,bl:2,tag:'vocab'},
+{q:'為什麼 Yash 請假十天？',opts:['生病','回印度過Holi','旅遊','家人來台'],ans:1,bl:2,tag:'dialogue'},
+{q:'各國新年的共同點？',opts:['都在一月','都用水','標誌新開始+帶來歡樂','都穿特殊服裝'],ans:2,bl:4,tag:'reading'},
+{q:'My birthday is _______ May.',opts:['in','on','at','of'],ans:0,bl:2,tag:'grammar-preposition'},
+{q:'twelve → _______',opts:['twelveth','twelvth','twelth','twelfth'],ans:3,bl:3,tag:'grammar-ordinal'},
+{q:"_______ the date today?",opts:["What's","When's","How's","Where's"],ans:0,bl:2,tag:'grammar-when'},
+{q:'Holi-day 有什麼特別？',opts:['糾正發音','雙關語','不知道Holi','拒絕請假'],ans:1,bl:4,tag:'reading'},
+{q:'People dance for good _______.',opts:['lucky','luck','lucks','luckily'],ans:1,bl:2,tag:'grammar-pos'},
+];
+const hub=JSON.parse(localStorage.getItem('eng_hub_v1')||'{}');
+function saveHub(){try{localStorage.setItem('eng_hub_v1',JSON.stringify(hub))}catch(e){}}
+function buildPath(){
+document.getElementById('pathCards').innerHTML=PATHS.map(p=>{
+const done=hub[p.id+'_done'];
+return`<a class="path-card${''}" href="${p.href}" style="border-color:${done?p.color:'transparent'}"><div class="path-icon" style="background:${p.bg}">${p.icon}</div><div class="path-info"><h3>${p.name}</h3><p>${p.desc}</p></div><span class="path-status">${done?'✅':'→'}</span></a>`}).join('')+
+`<div class="path-card" onclick="startDiag()" style="border-color:${hub.diag_done?'#0d9488':'transparent'}"><div class="path-icon" style="background:#f0fdfa">🧪</div><div class="path-info"><h3>綜合診斷</h3><p>15 題快速檢測 → 弱點分析</p></div><span class="path-status">${hub.diag_done?'✅':'→'}</span></div>`;
+}
+let dIdx=0,dScore=0,dAnswers={};
+function startDiag(){
+document.getElementById('diagSection').style.display='block';
+document.getElementById('weakSection').style.display='none';
+dIdx=0;dScore=0;dAnswers={};
+renderDiag();
+document.getElementById('diagSection').scrollIntoView({behavior:'smooth'});
+}
+function renderDiag(){
+if(dIdx>=DIAG_QS.length){showDiagResult();return}
+const q=DIAG_QS[dIdx];
+let h=`<div class="progress"><div class="progress-bar" style="width:${dIdx/DIAG_QS.length*100}%"></div></div>`;
+h+=`<p style="font-size:13px;color:#888;text-align:center">${dIdx+1} / ${DIAG_QS.length}</p>`;
+h+=`<p style="font-size:15px;font-weight:600;margin:12px 0">${q.q}</p>`;
+h+=q.opts.map((o,i)=>`<button class="quiz-option" onclick="checkDiag(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('');
+h+=`<div class="fb" id="dfb"></div>`;
+document.getElementById('diagContent').innerHTML=h;
+}
+function checkDiag(i){
+const q=DIAG_QS[dIdx];
+document.querySelectorAll('#diagContent .quiz-option').forEach((b,j)=>{b.disabled=true;if(j===q.ans)b.classList.add('correct')});
+const ok=i===q.ans;
+if(ok)dScore++;else document.querySelectorAll('#diagContent .quiz-option')[i].classList.add('wrong');
+dAnswers[dIdx]={ok,tag:q.tag,bl:q.bl};
+setTimeout(()=>{dIdx++;renderDiag()},1200);
+}
+function showDiagResult(){
+hub.diag_done=true;saveHub();buildPath();
+const pct=Math.round(dScore/DIAG_QS.length*100);
+let h=`<div class="score-box"><div class="score">${pct}%</div><p>${dScore} / ${DIAG_QS.length} 答對</p></div>`;
+h+='<div class="flex-center"><button class="btn btn-primary" onclick="startDiag()">🔄 重測</button><button class="btn btn-reset" onclick="showWeakness()">📊 查看弱點</button></div>';
+document.getElementById('diagContent').innerHTML=h;
+showWeakness();
+}
+function showWeakness(){
+document.getElementById('weakSection').style.display='block';
+const tagStats={};
+Object.values(dAnswers).forEach(a=>{
+if(!tagStats[a.tag])tagStats[a.tag]={right:0,wrong:0,bl:a.bl};
+a.ok?tagStats[a.tag].right++:tagStats[a.tag].wrong++;
+});
+const weak=Object.entries(tagStats).map(([tag,s])=>({
+tag,pct:Math.round(s.right/(s.right+s.wrong)*100),bl:s.bl
+})).sort((a,b)=>a.pct-b.pct);
+let h='<div class="weakness">';
+weak.forEach(w=>{
+const color=w.pct>=80?'#22c55e':w.pct>=60?'#f59e0b':'#ef4444';
+h+=`<div class="weakness-item"><span class="weakness-tag">${w.tag}</span><div class="weakness-bar"><div class="weakness-fill" style="width:${w.pct}%;background:${color}"></div></div><span class="weakness-pct" style="color:${color}">${w.pct}%</span></div>`;
+});
+h+='</div>';
+// recommendations
+const lowTags=weak.filter(w=>w.pct<80);
+if(lowTags.length){
+h+='<h3 style="font-size:14px;margin:14px 0 8px">🎯 個人化建議</h3>';
+lowTags.forEach(w=>{
+let rec;
+if(w.tag.includes('reading'))rec={url:'L3_cap_quiz.html',label:'會考閱讀刷題'};
+else if(w.tag.includes('dialogue'))rec={url:'L3_dialogue_practice.html',label:'對話應用練習'};
+else if(w.bl<=2)rec={url:'lesson_v5.html',label:'課程學習（單字卡/文法）'};
+else rec={url:'L3_bloom_practice.html',label:'Bloom 練習'};
+h+=`<div class="rec">${w.tag}（${w.pct}%）→ 建議前往 <a href="${rec.url}">${rec.label}</a></div>`;
+});
+}else{
+h+='<div class="rec">🎉 全部掌握！建議挑戰 <a href="L3_dialogue_practice.html">對話應用練習</a> 提升實戰能力。</div>';
+}
+h+='<div class="flex-center"><button class="btn btn-reset" onclick="document.getElementById(\'weakSection\').style.display=\'none\'">收起</button></div>';
+document.getElementById('weakContent').innerHTML=h;
+document.getElementById('weakSection').scrollIntoView({behavior:'smooth'});
+}
+function resetAll(){
+if(!confirm('確定要重置所有進度嗎？'))return;
+localStorage.removeItem('eng_hub_v1');
+localStorage.removeItem('l3_bloom_progress');
+localStorage.removeItem('l3_dialogue_progress');
+localStorage.removeItem('l3_streak');
+location.reload();
+}
+buildPath();
+</script>
+</body>
+</html>

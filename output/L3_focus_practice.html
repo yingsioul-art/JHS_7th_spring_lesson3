@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3 聚焦複習</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Microsoft JhengHei',sans-serif;background:#f5f3ff;color:#1a1a2e;line-height:1.6}
+.app{max-width:680px;margin:0 auto;padding:0 12px 80px}
+header{background:linear-gradient(135deg,#7c3aed,#6d28d9);color:#fff;padding:16px;border-radius:0 0 16px 16px;margin-bottom:16px;text-align:center}
+header h1{font-size:18px}header p{font-size:13px;opacity:.85;margin-top:4px}
+.nav-group{margin:14px 0}
+.nav-label{font-size:13px;font-weight:600;color:#7c3aed;margin-bottom:8px}
+.nav-row{display:flex;flex-wrap:wrap;gap:6px}
+.nav-btn{padding:8px 14px;border:2px solid #e9d5ff;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;transition:all .2s}
+.nav-btn:hover{border-color:#7c3aed;background:#f5f3ff}
+.nav-btn.active{border-color:#7c3aed;background:#7c3aed;color:#fff}
+.qcard{background:#fff;border-radius:14px;padding:18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.06);border:1px solid #e9d5ff}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.bloom-badge{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:#fff}
+.qtext{font-size:15px;font-weight:600;margin-bottom:12px}
+.quiz-option{display:block;width:100%;text-align:left;padding:12px 16px;margin:6px 0;border:2px solid #e9d5ff;border-radius:10px;background:#fff;font-size:14px;cursor:pointer;transition:all .2s}
+.quiz-option:hover{border-color:#7c3aed;background:#f5f3ff}
+.quiz-option.correct{border-color:#22c55e;background:#f0fdf4;color:#166534}
+.quiz-option.wrong{border-color:#ef4444;background:#fef2f2;color:#991b1b}
+.quiz-option:disabled{cursor:default}
+.fill-input{border:none;border-bottom:2px solid #7c3aed;background:transparent;font-size:16px;padding:4px 8px;width:150px;outline:none;text-align:center}
+.fill-input.correct{border-color:#22c55e;color:#166534}
+.fill-input.wrong{border-color:#ef4444;color:#991b1b}
+.fb{display:none;margin-top:12px;padding:12px;background:#f8fafb;border-radius:10px;border-left:3px solid #7c3aed;font-size:13px}
+.fb.show{display:block;animation:fadeIn .3s}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.progress{height:6px;background:#e9d5ff;border-radius:3px;margin:12px 0;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,#7c3aed,#a78bfa);border-radius:3px;transition:width .4s}
+.score-box{text-align:center;padding:24px;background:linear-gradient(135deg,#f5f3ff,#fff);border-radius:14px;margin:16px 0}
+.score-box .score{font-size:48px;font-weight:700;color:#7c3aed}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;transition:all .2s}
+.btn-primary{background:#7c3aed;color:#fff}.btn-primary:hover{background:#6d28d9}
+.btn-reset{background:#f1f5f9;color:#64748b}
+.flex-center{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.empty{text-align:center;color:#888;padding:40px;font-size:14px}
+.wrong-item{background:#f5f3ff;border-radius:8px;padding:10px;margin:6px 0;font-size:13px}
+.sample{background:#f0fdf4;padding:12px;border-radius:8px;margin:8px 0;font-size:13px;white-space:pre-line}
+a.back{display:inline-block;margin:12px 0;color:#7c3aed;text-decoration:none;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>🎯 L3 聚焦複習</h1>
+<p>按題型與標籤分組 ｜ 針對弱點加強</p>
+</header>
+<div class="app">
+<a class="back" href="index.html">← 返回學習中心</a>
+<div class="nav-group"><div class="nav-label">📂 題型分組</div><div class="nav-row" id="typeNav"></div></div>
+<div class="nav-group"><div class="nav-label">🏷️ 標籤篩選</div><div class="nav-row" id="tagNav"></div></div>
+<div class="progress"><div class="progress-bar" id="bar"></div></div>
+<div id="content"></div>
+</div>
+<script>
+const ALL=[
+// 字彙
+{q:'I _______ Vera well.',opts:['knock','mark','celebrate','wish'],ans:3,why:'wish 祝。',bl:1,color:'#10b981',type:'vocab',tags:['vocab-wish']},
+{q:'Mom: _______ your hands.',opts:['Celebrate','Wish','Wash','Mark'],ans:2,why:'Wash 洗。',bl:1,color:'#10b981',type:'vocab',tags:['vocab-wash']},
+{q:'The garden looks very _______.',opts:['colorful','large','other','busy'],ans:0,why:'colorful 繽紛的。',bl:1,color:'#10b981',type:'vocab',tags:['vocab-adj']},
+{q:'There are twelve _______ in a year.',opts:['dates','months','festivals','weeks'],ans:1,why:'months 月份。',bl:1,color:'#10b981',type:'vocab',tags:['vocab-month']},
+{q:'People _______ their New Year Songkran.',opts:['name','say','call','talk'],ans:2,why:'call A B = 稱 A 為 B。',bl:2,color:'#06b6d4',type:'vocab',tags:['vocab-call']},
+{q:'Water can _______ away bad luck.',opts:['wash','wish','watch','walk'],ans:0,why:'wash away = 洗去。',bl:2,color:'#06b6d4',type:'vocab',tags:['vocab-wash']},
+// 文法-介系詞
+{q:"Judy's concert is _______ August 14.",opts:['about','at','in','on'],ans:3,why:'on + 特定日期。',bl:2,color:'#06b6d4',type:'grammar',tags:['grammar-preposition']},
+{q:'My birthday is _______ May.',opts:['in','on','at','of'],ans:0,why:'in + 月份。',bl:2,color:'#06b6d4',type:'grammar',tags:['grammar-preposition']},
+{q:'Christmas is just _______ the corner.',opts:['for','off','around','under'],ans:2,why:'around the corner = 即將到來。',bl:3,color:'#3b82f6',type:'grammar',tags:['grammar-preposition','idiom']},
+{q:'People dance for good _______.',opts:['lucky','luck','lucks','luckily'],ans:1,why:'luck 名詞。for good luck。',bl:2,color:'#06b6d4',type:'grammar',tags:['grammar-pos']},
+{q:'They have two things _______ common.',opts:['on','in','at','of'],ans:1,why:'in common 共同。',bl:3,color:'#3b82f6',type:'grammar',tags:['grammar-preposition','idiom']},
+// 文法-序數
+{q:"It's January _______. (最後一天)",opts:['thirty','thirty-one','thirty-first','thirtieth'],ans:2,why:'日期用序數 thirty-first。',bl:2,color:'#06b6d4',type:'grammar',tags:['grammar-ordinal']},
+{q:'five → _______',opts:['fiveth','fivth','fifth','firth'],ans:2,why:'five → fifth（ve→fth）。',bl:3,color:'#3b82f6',type:'grammar',tags:['grammar-ordinal']},
+{q:'twelve → _______',opts:['twelveth','twelvth','twelth','twelfth'],ans:3,why:'twelve → twelfth。',bl:3,color:'#3b82f6',type:'grammar',tags:['grammar-ordinal']},
+{q:'The concert is _______ October twenty-_______.',opts:['in, one','on, first','at, one','on, oneth'],ans:1,why:'on + 序數。twenty-first。',bl:3,color:'#3b82f6',type:'grammar',tags:['grammar-ordinal','grammar-preposition']},
+// 文法-When/What
+{q:'_______ is Christmas?',opts:['What','When','Where','How'],ans:1,why:'When 詢問時間。',bl:2,color:'#06b6d4',type:'grammar',tags:['grammar-when']},
+{q:"_______ the date of your birthday?",opts:["What's","When's","How's","Where's"],ans:0,why:"What's the date 問幾號。",bl:2,color:'#06b6d4',type:'grammar',tags:['grammar-when']},
+// 閱讀
+{q:'課文中哪個是正確的？',opts:['India: bear costumes','Romania: dance for good luck','Thailand: colorful powders'],ans:1,why:'Romania → bear + dance for good luck。',bl:4,color:'#8b5cf6',type:'reading',tags:['reading-detail']},
+{q:'Holi-day 有什麼特別？',opts:['糾正發音','雙關語','不知道Holi','拒絕請假'],ans:1,why:'Holi + holiday 雙關語。',bl:4,color:'#8b5cf6',type:'reading',tags:['reading-inference']},
+{q:'"have two things in common" 是什麼意思？',opts:['有兩個相似之處','有兩件不同的事','分享兩個故事','同日慶祝'],ans:0,why:'in common = 共同點。',bl:4,color:'#8b5cf6',type:'reading',tags:['reading-vocab-guess']},
+// 對話
+{q:'為什麼 Yash 請假？',opts:['生病','回印度過Holi','旅遊','家人來台'],ans:1,why:"I'm going back to India for Holi.",bl:2,color:'#06b6d4',type:'dialogue',tags:['dialogue-comprehension']},
+{q:'各國新年共同點？',opts:['都在一月','都用水','標誌新開始+帶來歡樂','都穿特殊服裝'],ans:2,why:'mark a new start and bring joy.',bl:4,color:'#8b5cf6',type:'reading',tags:['reading-main-idea']},
+];
+const TYPES={vocab:'📝 字彙',grammar:'⚙️ 文法',reading:'📖 閱讀',dialogue:'💬 對話'};
+let curType=null,curTag=null,pool=[],pidx=0,pscore=0,pwrong=[];
+function getAllTags(){const s=new Set();ALL.forEach(q=>q.tags.forEach(t=>s.add(t)));return[...s].sort()}
+function buildTypeNav(){
+document.getElementById('typeNav').innerHTML=Object.entries(TYPES).map(([k,v])=>{
+const c=ALL.filter(q=>q.type===k).length;
+return`<div class="nav-btn" onclick="filterType('${k}')">${v} (${c})</div>`}).join('')+'<div class="nav-btn" onclick="filterType(null)">全部 ('+ALL.length+')</div>';
+}
+function buildTagNav(){
+const tags=getAllTags();
+document.getElementById('tagNav').innerHTML=tags.map(t=>{
+const c=ALL.filter(q=>q.tags.includes(t)).length;
+return`<div class="nav-btn" onclick="filterTag('${t}')">${t} (${c})</div>`}).join('');
+}
+function filterType(t){
+curType=t;curTag=null;
+document.querySelectorAll('#typeNav .nav-btn').forEach(b=>b.classList.remove('active'));
+if(t)event.target.classList.add('active');
+startQuiz();
+}
+function filterTag(t){
+curTag=t;curType=null;
+document.querySelectorAll('#tagNav .nav-btn').forEach(b=>b.classList.remove('active'));
+event.target.classList.add('active');
+startQuiz();
+}
+function startQuiz(){
+pool=ALL.filter(q=>{
+if(curType&&q.type!==curType)return false;
+if(curTag&&!q.tags.includes(curTag))return false;
+return true;
+});
+pidx=0;pscore=0;pwrong=[];renderQ();
+}
+function renderQ(){
+if(!pool.length){document.getElementById('content').innerHTML='<div class="empty">請選擇題型或標籤</div>';return}
+if(pidx>=pool.length){showFocusResult();return}
+const e=pool[pidx];
+document.getElementById('bar').style.width=(pidx/pool.length*100)+'%';
+let h=`<div class="qcard"><div class="qhead"><span style="font-size:13px;color:#888">${pidx+1}/${pool.length}</span><span class="bloom-badge" style="background:${e.color}">L${e.bl}</span>${e.tags.map(t=>`<span style="font-size:11px;background:#f1f5f9;padding:2px 6px;border-radius:4px;color:#666">${t}</span>`).join('')}</div><div class="qtext">${e.q}</div>`;
+h+=e.opts.map((o,i)=>`<button class="quiz-option" onclick="checkF(${i})">${String.fromCharCode(65+i)}. ${o}</button>`).join('');
+h+=`<div class="fb" id="fb"></div></div>`;
+document.getElementById('content').innerHTML=h;
+}
+function checkF(i){
+const e=pool[pidx];
+document.querySelectorAll('.quiz-option').forEach((b,j)=>{b.disabled=true;if(j===e.ans)b.classList.add('correct')});
+if(i===e.ans)pscore++;else{document.querySelectorAll('.quiz-option')[i].classList.add('wrong');pwrong.push(e)}
+document.getElementById('fb').innerHTML='💡 '+e.why;document.getElementById('fb').classList.add('show');
+setTimeout(()=>{pidx++;renderQ()},1800);
+}
+function showFocusResult(){
+document.getElementById('bar').style.width='100%';
+const pct=Math.round(pscore/pool.length*100);
+let h=`<div class="score-box"><div class="score">${pct}%</div><p>${pscore} / ${pool.length} 答對</p></div>`;
+if(pwrong.length){h+='<div style="margin-top:14px"><h3 style="font-size:14px">❌ 錯題</h3>';pwrong.forEach(e=>{h+=`<div class="wrong-item"><span class="bloom-badge" style="background:${e.color}">L${e.bl}</span> ${e.q}<br>💡 ${e.why}</div>`});h+='</div>'}
+h+='<div class="flex-center"><button class="btn btn-primary" onclick="startQuiz()">🔄 重新練習</button><button class="btn btn-reset" onclick="curType=null;curTag=null;document.getElementById(\'content\').innerHTML=\'<div class=empty>請選擇題型或標籤</div>\'">清除篩選</button></div>';
+document.getElementById('content').innerHTML=h;
+}
+buildTypeNav();buildTagNav();
+document.getElementById('content').innerHTML='<div class="empty">👆 選擇上方的題型或標籤開始練習</div>';
+</script>
+</body>
+</html>

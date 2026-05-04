@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3 Bloom 六層次練習</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Microsoft JhengHei',sans-serif;background:#f0fdfa;color:#1a1a2e;line-height:1.6}
+.app{max-width:680px;margin:0 auto;padding:0 12px 80px}
+header{background:linear-gradient(135deg,#0d9488,#0f766e);color:#fff;padding:16px;border-radius:0 0 16px 16px;margin-bottom:16px;text-align:center}
+header h1{font-size:18px}header p{font-size:13px;opacity:.85;margin-top:4px}
+.ladder{display:flex;flex-direction:column;gap:8px;margin:16px 0}
+.ladder-btn{display:flex;align-items:center;gap:10px;padding:14px 16px;border:2px solid #e0e7ff;border-radius:12px;background:#fff;cursor:pointer;transition:all .2s;font-size:14px}
+.ladder-btn:hover{transform:translateX(4px);box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.ladder-btn.active{border-color:var(--c);background:var(--bg)}
+.ladder-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;flex-shrink:0}
+.ladder-info{flex:1}.ladder-info .name{font-weight:600}.ladder-info .desc{font-size:12px;color:#888}
+.ladder-count{font-size:12px;color:#888;background:#f1f5f9;padding:2px 8px;border-radius:10px}
+.level-section{display:none;animation:fadeIn .3s}
+.level-section.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.qcard{background:#fff;border-radius:14px;padding:18px;margin:12px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.qhead{display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.bloom-badge{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:#fff}
+.qtext{font-size:15px;font-weight:600;margin-bottom:12px}
+.quiz-option{display:block;width:100%;text-align:left;padding:12px 16px;margin:6px 0;border:2px solid #e0e7ff;border-radius:10px;background:#fff;font-size:14px;cursor:pointer;transition:all .2s}
+.quiz-option:hover{border-color:#0d9488;background:#f0fdfa}
+.quiz-option.correct{border-color:#22c55e;background:#f0fdf4;color:#166534}
+.quiz-option.wrong{border-color:#ef4444;background:#fef2f2;color:#991b1b}
+.quiz-option:disabled{cursor:default}
+.fill-input{border:none;border-bottom:2px solid #0d9488;background:transparent;font-size:16px;padding:4px 8px;width:150px;outline:none;text-align:center}
+.fill-input.correct{border-color:#22c55e;color:#166534}
+.fill-input.wrong{border-color:#ef4444;color:#991b1b}
+.fb{display:none;margin-top:12px;padding:12px;background:#f8fafb;border-radius:10px;border-left:3px solid #0d9488;font-size:13px}
+.fb.show{display:block;animation:fadeIn .3s}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;transition:all .2s}
+.btn-primary{background:#0d9488;color:#fff}.btn-primary:hover{background:#0f766e}
+.btn-reset{background:#f1f5f9;color:#64748b}
+.flex-center{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.open-area textarea{width:100%;min-height:100px;padding:12px;border:2px solid #e0e7ff;border-radius:10px;font-size:14px;font-family:inherit;resize:vertical}
+.sample{background:#f0fdf4;padding:12px;border-radius:8px;margin:8px 0;font-size:13px}
+.checklist{font-size:13px;padding-left:20px;margin:8px 0}
+.tip{font-size:13px;color:#0d9488;margin-top:8px;padding:8px;background:#f0fdfa;border-radius:8px}
+a.back{display:inline-block;margin:12px 0;color:#0d9488;text-decoration:none;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>🪜 L3 Bloom 六層次練習</h1>
+<p>從記憶到創造 ｜ 階梯式學習</p>
+</header>
+<div class="app">
+<a class="back" href="index.html">← 返回學習中心</a>
+<div class="ladder" id="ladder"></div>
+<div id="levelContent"></div>
+</div>
+<script>
+const LEVELS=[
+{l:1,name:'L1 Remember 記憶',desc:'回憶基本詞彙與事實',color:'#10b981',bg:'#ecfdf5'},
+{l:2,name:'L2 Understand 理解',desc:'理解概念與語意',color:'#06b6d4',bg:'#ecfeff'},
+{l:3,name:'L3 Apply 應用',desc:'在新情境中運用所學',color:'#3b82f6',bg:'#eff6ff'},
+{l:4,name:'L4 Analyze 分析',desc:'比較、分類、找出規律',color:'#8b5cf6',bg:'#f5f3ff'},
+{l:5,name:'L5 Evaluate 評估',desc:'判斷、批評、提出觀點',color:'#ec4899',bg:'#fdf2f8'},
+{l:6,name:'L6 Create 創造',desc:'設計、寫作、創作對話',color:'#f59e0b',bg:'#fffbeb'},
+];
+const QS={
+1:[
+{q:'I _______ Vera well at her new school life.',opts:['knock','mark','celebrate','wish'],ans:3,why:'wish 祝；希望。'},
+{q:'Mom: _______ your hands before you eat.',opts:['Celebrate','Wish','Wash','Mark'],ans:2,why:'Wash your hands = 洗手。'},
+{q:'The garden looks very _______.',opts:['colorful','large','other','busy'],ans:0,why:'colorful 繽紛的。'},
+{q:'The weather is cold _______ December.',opts:['in','on','at','about'],ans:0,why:'月份前用 in。'},
+{q:'There are twelve _______ in a year.',opts:['dates','months','festivals','weeks'],ans:1,why:'一年十二個月。'},
+{q:"Teacher's Day is in _______.",type:'fill',ans:'September',why:'教師節在九月。'},
+],
+2:[
+{q:"Judy's concert is _______ August 14.",opts:['about','at','in','on'],ans:3,why:'特定日期前用 on。'},
+{q:"_______ is Christmas?",opts:['When','What','What day','How'],ans:0,why:'When 詢問時間。'},
+{q:"It's January _______. (最後一天)",opts:['thirty','thirteen','thirty-one','thirty-first'],ans:3,why:'日期用序數。'},
+{q:"What's the _______ today?",opts:['day','date','time','month'],ans:1,why:'date 問幾號。'},
+{q:'為什麼 Yash 請假十天？',opts:['生病','回印度過侯麗節','旅遊','家人來台灣'],ans:1,why:'回印度過 Holi。'},
+{q:'各國新年的共同點？',opts:['都在一月','都用水','標誌新開始+帶來歡樂','都穿特殊服裝'],ans:2,why:'mark a new start and bring joy for all.'},
+],
+3:[
+{q:'How do people _______ the New Year?',type:'fill',ans:'celebrate',why:'celebrate 慶祝。'},
+{q:'Chinese New Year is my favorite _______.',type:'fill',ans:'holiday',why:'holiday 節日。'},
+{q:"It's on March _______. (20日)",type:'fill',ans:'twentieth',why:'20 的序數 = twentieth。'},
+{q:"It's _______ January seventeenth.",type:'fill',ans:'on',why:'特定日期前用 on。'},
+{q:'「母親節何時？」',opts:["What is Mother's Day?","How is Mother's Day?","When is Mother's Day?","Where is Mother's Day?"],ans:2,why:'When is...? 詢問日期。'},
+{q:'We also _______ it the festival of colors.',type:'fill',ans:'call',why:'call A B = 稱 A 為 B。'},
+],
+4:[
+{q:'哪個介系詞正確？',opts:['Christmas is in December 25.','My birthday is on May 3rd.','The party is on October.','School starts at January.'],ans:1,why:'on + 特定日期 ✓'},
+{q:'哪個序數拼法正確？',opts:['five → fiveth','twelve → twelfth','nine → nineth','eight → eightth'],ans:1,why:'twelve → twelfth ✓'},
+{q:'Best title for the reading?',opts:['New Year Wishes','Different Dates','The New Year Around the World'],ans:2,why:'介紹各國新年慶祝方式。'},
+{q:'What do we know from the reading?',opts:['India: bear costumes','Romania: good luck','Thailand: colorful powders'],ans:1,why:'羅馬尼亞人跳舞 for good luck。'},
+{q:'Holi-day 有什麼特別？',opts:['糾正發音','雙關語','不知道Holi','拒絕請假'],ans:1,why:'Holi + holiday 雙關語。'},
+{q:"What's the date vs When is the party?",opts:['完全相同','date問幾號;When問事件時間','date問星期','When問幾點'],ans:1,why:'不同問法不同用途。'},
+],
+5:[
+{q:'比較台灣農曆新年和泰國潑水節，哪個更有趣？用英文寫 2-3 句。',type:'open',sample:'I think Songkran is more interesting because people can have water fights. It sounds like a lot of fun.',focus:['比較兩節日','個人觀點','本課詞彙'],tip:'母語人士常用 I think...is more...because...'},
+{q:'找出錯誤：My birthday is in May 15. I want to celebrate them.',type:'open',sample:"'in May 15' → 'on May 15'; 'them' → 'it' (birthday singular).",focus:['in→on','them→it','英文說明'],tip:'in + 月份；on + 特定日期'},
+{q:'序數都是加 -th 嗎？舉 3 個反例。',type:'open',sample:"first/second/third don't use -th; fifth: five→fif+th; twelfth: twelve→twelf+th.",focus:['表態','3反例','拼寫正確'],tip:'fifth/twelfth/ninth 最常拼錯'},
+{q:'Can I please vs I want，哪個適合對老師說？',type:'open',sample:"'Can I please' is better — polite and shows respect.",focus:['判斷禮貌差異','Can I please 禮貌','英文理由'],tip:'對長輩用 Could I / May I / Can I please'},
+{q:'water can wash away bad luck — 科學還是文化？',type:'open',sample:'It is a cultural belief, not scientific fact.',focus:['區分 fact/belief','英文表達','wash away, luck'],tip:'批判性思考'},
+{q:'選一國體驗新年，為什麼？2-3 句。',type:'open',sample:"I'd love to go to Thailand for Songkran. It's on April 13th and the weather is warm.",focus:['選國+理由','日期表達','本課詞彙'],tip:"母語人士常說 I'd love to go to..."},
+],
+6:[
+{q:'情境：你遇到印度交換生 Raj，互相介紹節日。寫 5-6 句對話，用 When is / call A B / celebrate。',type:'open',sample:"You: Hi Raj! When is Holi?\nRaj: It's on March 14th. We call it the festival of colors.\nYou: Cool! Chinese New Year is in February. We celebrate with big meals.\nRaj: That sounds great!",focus:['When is 句型','call A B','至少5句','文化交流'],tip:'用 That sounds great! 回應比 OK 更自然。'},
+{q:'美國筆友 Emma 問台灣節日。寫 5-6 句 LINE 對話，提到 3 個節日+日期。',type:'open',sample:"Emma: Hey! When is the Moon Festival?\nYou: It's in September. We eat mooncakes!\nEmma: What about Teacher's Day?\nYou: It's on September 28th.",focus:['3個節日','It\'s on + 日期','celebrate/wish','LINE風格'],tip:"LINE 中用 Hey! / Cool! 比 Dear Emma 自然。"},
+{q:'設計班級節日：名稱、日期、3 個活動。4-5 句。',type:'open',sample:"Our class festival is called 'Friendship Day.' It's on November 15th. We write cards and wish each other well.",focus:['節日名(call)','日期表達','3個活動','本課詞彙'],tip:'用 For example 列舉活動。'},
+{q:'仿寫課文：台灣人如何過農曆新年。用 celebrate, for example, each other。',type:'open',sample:'In Taiwan, people celebrate Chinese New Year with family. For example, they have a big dinner. Children wish each other a happy new year.',focus:['celebrate','for example','each other','3-4句'],tip:'仿照課文結構寫作。'},
+{q:'寫信給巴西朋友 Carlos 介紹農曆新年。含日期、2 活動、祝福語。',type:'open',sample:"Hello Carlos,\nWe celebrate Chinese New Year in January or February. We have big meals and get red envelopes. Happy New Year!\nLove, (name)",focus:['書信格式','日期','2活動','祝福語'],tip:'書信結尾用 Love 或 Best wishes。'},
+{q:'設計「世界新年」海報：3 個國家，每個 1-2 句含日期+慶祝方式。',type:'open',sample:"🇹🇭 Thailand: Songkran is on April 13th. People have water fights.\n🇷🇴 Romania: Bear dance on Dec 31st for good luck.\n🇹🇼 Taiwan: Chinese New Year — big meals and red envelopes.",focus:['3國家','日期+方式','on/in正確','本課詞彙'],tip:'用 emoji 國旗增添趣味。'},
+],
+};
+let curLevel=null;
+const progress=JSON.parse(localStorage.getItem('l3_bloom_progress')||'{}');
+function saveProg(){try{localStorage.setItem('l3_bloom_progress',JSON.stringify(progress))}catch(e){}}
+function buildLadder(){
+document.getElementById('ladder').innerHTML=LEVELS.map(lv=>{
+const done=progress[lv.l]||0;const total=QS[lv.l]?QS[lv.l].length:0;
+return`<div class="ladder-btn" style="--c:${lv.color};--bg:${lv.bg}" onclick="showLevel(${lv.l})"><div class="ladder-dot" style="background:${lv.color}">L${lv.l}</div><div class="ladder-info"><div class="name">${lv.name}</div><div class="desc">${lv.desc}</div></div><span class="ladder-count">${done}/${total}</span></div>`}).join('');
+}
+function showLevel(l){
+curLevel=l;const lv=LEVELS[l-1];const qs=QS[l]||[];
+document.querySelectorAll('.ladder-btn').forEach((b,i)=>b.classList.toggle('active',i===l-1));
+let html=`<div class="level-section show"><h2 style="color:${lv.color};margin:16px 0 12px">${lv.name}</h2><p style="font-size:13px;color:#888;margin-bottom:16px">${lv.desc} — ${qs.length} 題</p>`;
+qs.forEach((q,i)=>{
+html+=`<div class="qcard" id="qc${l}_${i}"><div class="qhead"><span class="bloom-badge" style="background:${lv.color}">L${l} ${lv.name.split(' ')[1]}</span></div><div class="qtext">${i+1}. ${q.q}</div>`;
+if(q.type==='fill'){html+=`<div style="text-align:center"><input class="fill-input" id="fi${l}_${i}" placeholder="答案" onkeydown="if(event.key==='Enter')checkBloom(${l},${i},'fill')"><button class="btn btn-primary" style="margin-left:8px;padding:6px 14px;font-size:13px" onclick="checkBloom(${l},${i},'fill')">確認</button></div>`}
+else if(q.type==='open'){html+=`<div class="open-area"><textarea id="oi${l}_${i}" placeholder="用英文作答..."></textarea></div><div class="flex-center"><button class="btn btn-primary" style="font-size:13px" onclick="showOpenBloom(${l},${i})">提交</button></div>`}
+else{html+=q.opts.map((o,j)=>`<button class="quiz-option" onclick="checkBloom(${l},${i},'mc',${j})">${String.fromCharCode(65+j)}. ${o}</button>`).join('')}
+html+=`<div class="fb" id="fb${l}_${i}"></div></div>`;
+});
+html+=`<div class="flex-center"><button class="btn btn-reset" onclick="resetLevel(${l})">🔄 重置此層</button></div></div>`;
+document.getElementById('levelContent').innerHTML=html;
+}
+function checkBloom(l,i,type,j){
+const q=QS[l][i],fb=document.getElementById('fb'+l+'_'+i);
+if(type==='mc'){
+const card=document.getElementById('qc'+l+'_'+i);
+card.querySelectorAll('.quiz-option').forEach((b,k)=>{b.disabled=true;if(k===q.ans)b.classList.add('correct')});
+if(j!==q.ans)card.querySelectorAll('.quiz-option')[j].classList.add('wrong');
+fb.innerHTML='💡 '+q.why;fb.classList.add('show');
+}else{
+const inp=document.getElementById('fi'+l+'_'+i),v=inp.value.trim();
+if(!v)return;
+if(v.toLowerCase()===q.ans.toLowerCase()){inp.classList.add('correct');fb.innerHTML='✅ 正確！'+q.why}
+else{inp.classList.add('wrong');fb.innerHTML='❌ 正確答案：'+q.ans+'。'+q.why}
+fb.classList.add('show');
+}
+progress[l]=(progress[l]||0)+1;saveProg();buildLadder();
+}
+function showOpenBloom(l,i){
+const q=QS[l][i],fb=document.getElementById('fb'+l+'_'+i);
+let html=`<p style="font-weight:600">📖 參考答案：</p><div class="sample">${q.sample.replace(/\n/g,'<br>')}</div>`;
+html+=`<p style="font-weight:600;margin-top:8px">✅ 自評清單：</p><ul class="checklist">`;
+q.focus.forEach(f=>{html+=`<li>□ ${f}</li>`});
+html+=`</ul>`;
+if(q.tip)html+=`<div class="tip">🗣️ ${q.tip}</div>`;
+fb.innerHTML=html;fb.classList.add('show');
+progress[l]=(progress[l]||0)+1;saveProg();buildLadder();
+}
+function resetLevel(l){progress[l]=0;saveProg();buildLadder();showLevel(l)}
+buildLadder();
+</script>
+</body>
+</html>

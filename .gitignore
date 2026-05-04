@@ -1,0 +1,15 @@
+# Ignore Python scripts from Phase 1
+*.py
+*.pyc
+__pycache__/
+
+# Ignore raw iOS photos and cropped fragments
+*.heic
+*.HEIC
+crops/
+螢幕擷取畫面*.png
+
+# Ignore raw PDF exam papers
+*.pdf
+
+# Only track web application assets and used JPGs

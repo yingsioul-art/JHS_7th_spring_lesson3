@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>L3 對話應用練習</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter','Microsoft JhengHei',sans-serif;background:#fff7ed;color:#1a1a2e;line-height:1.6}
+.app{max-width:680px;margin:0 auto;padding:0 12px 80px}
+header{background:linear-gradient(135deg,#ea580c,#c2410c);color:#fff;padding:16px;border-radius:0 0 16px 16px;margin-bottom:16px;text-align:center}
+header h1{font-size:18px}header p{font-size:13px;opacity:.85;margin-top:4px}
+.section{background:#fff;border-radius:14px;padding:18px;margin:14px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.section h2{font-size:16px;color:#ea580c;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.tabs{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.tab{padding:8px 14px;border:2px solid #fed7aa;border-radius:10px;background:#fff;cursor:pointer;font-size:13px;transition:all .2s}
+.tab:hover{border-color:#ea580c;background:#fff7ed}
+.tab.active{border-color:#ea580c;background:#ea580c;color:#fff}
+.pattern-card{background:#fff7ed;border-radius:12px;padding:14px;margin:8px 0;border:1px solid #fed7aa}
+.pattern-en{font-size:16px;font-weight:600;color:#9a3412}
+.pattern-zh{font-size:13px;color:#888;margin-top:4px}
+.pattern-examples{margin-top:8px;font-size:13px;color:#666}
+.pattern-examples div{padding:3px 0}
+.pattern-ctx{font-size:11px;color:#ea580c;margin-top:6px}
+.speak-btn{border:none;background:none;font-size:18px;cursor:pointer;padding:2px 6px}
+.speak-btn:hover{transform:scale(1.2)}
+.bloom-badge{padding:2px 8px;border-radius:6px;font-size:11px;font-weight:600;color:#fff;display:inline-block;margin-bottom:8px}
+.scenario{background:#fff7ed;border-radius:10px;padding:14px;margin:10px 0;border-left:4px solid #ea580c;font-size:14px}
+.roleplay-area textarea{width:100%;min-height:120px;padding:12px;border:2px solid #fed7aa;border-radius:10px;font-size:14px;font-family:inherit;resize:vertical}
+.feedback{display:none;margin-top:14px;animation:fadeIn .3s}
+.feedback.show{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.sample-answer{background:#f0fdf4;padding:14px;border-radius:10px;font-size:13px;line-height:1.8;white-space:pre-line;margin:8px 0}
+.grading-focus{margin:10px 0;padding-left:20px;font-size:13px}
+.grading-focus li{padding:2px 0}
+.native-tip{background:#fff7ed;border-radius:10px;padding:12px;font-size:13px;color:#ea580c;margin:8px 0;border:1px solid #fed7aa}
+.ctx-tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;background:#fef3c7;color:#92400e;margin:2px}
+.progress-tracker{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.progress-dot{width:28px;height:28px;border-radius:50%;border:2px solid #fed7aa;display:flex;align-items:center;justify-content:center;font-size:11px;color:#888}
+.progress-dot.done{background:#ea580c;color:#fff;border-color:#ea580c}
+.btn{padding:10px 20px;border:none;border-radius:10px;font-size:14px;cursor:pointer;font-weight:600;transition:all .2s}
+.btn-primary{background:#ea580c;color:#fff}.btn-primary:hover{background:#c2410c}
+.btn-reset{background:#f1f5f9;color:#64748b}
+.flex-center{display:flex;justify-content:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+a.back{display:inline-block;margin:12px 0;color:#ea580c;text-decoration:none;font-size:13px}
+</style>
+</head>
+<body>
+<header>
+<h1>🗣️ L3 對話應用練習</h1>
+<p>與母語人士對談的實戰訓練</p>
+</header>
+<div class="app">
+<a class="back" href="index.html">← 返回學習中心</a>
+<div class="tabs" id="mainTabs"></div>
+<div id="mainContent"></div>
+</div>
+<script>
+const TABS=['🔑 可遷移句型','🎭 角色扮演','🗣️ 母語人士說法','📊 進度'];
+const PATTERNS=[
+{en:'Excuse me, ...?',zh:'不好意思，……',examples:['Excuse me, where is the library?','Excuse me, is this seat taken?','Excuse me, may I ask a question?'],ctx:['casual-chat','travel','school']},
+{en:'Can I please + V?',zh:'我可以……嗎？（禮貌請求）',examples:['Can I please take a day off?','Can I please borrow your pen?','Can I please sit here?'],ctx:['school','casual-chat']},
+{en:'When is + 事件?',zh:'……是什麼時候？',examples:['When is your birthday?','When is the school trip?','When is the concert?'],ctx:['casual-chat','school','cultural-exchange']},
+{en:"What's the date (today)?",zh:'今天幾號？',examples:["What's the date today?","What's the date of the test?","What's today's date?"],ctx:['casual-chat','school']},
+{en:"It's on + 月份 + 日期",zh:'在某月某日',examples:["It's on March 9th.","It's on December 25th.","The party is on October 31st."],ctx:['casual-chat','school']},
+{en:'We call it + 名稱',zh:'我們稱它為……',examples:['We call it the festival of colors.','We call it Dragon Boat Festival.','People call it Songkran.'],ctx:['cultural-exchange','introduction']},
+{en:'All is well.',zh:'一切都好。',examples:["Don't worry, all is well.","How are things? All is well!","Is everything okay? Yes, all is well."],ctx:['casual-chat','school']},
+{en:'just around the corner',zh:'即將到來',examples:['Christmas is just around the corner!','Summer break is just around the corner.','The exam is just around the corner.'],ctx:['casual-chat','school']},
+];
+const ROLEPLAYS=[
+{id:'rp1',bl:6,blabel:'Create',title:'文化交流：和印度交換生聊節日',ctx:'cultural-exchange',
+scenario:'你在學校遇到來自印度的交換生 Raj。你想了解侯麗節（Holi），Raj 也想知道台灣的農曆新年。\n請寫 5-6 句對話，運用 When is...? / call A B / celebrate。',
+sample_answer:"You: Hi Raj! When is Holi this year?\nRaj: It's on March 14th. We call it the festival of colors. When is Chinese New Year?\nYou: It falls in January or February. We celebrate with big meals.\nRaj: How do you celebrate it?\nYou: We wish each other a happy new year and get red envelopes!\nRaj: That sounds great! In India, we throw colorful powders at each other.",
+grading_focus:['正確使用 When is...? 句型','正確使用 call A B 或 celebrate','對話至少 5 句','融入文化交流內容'],
+native_speaker_tip:'母語人士在文化交流中常用 That sounds great! / That\'s so cool! 來回應，比 OK 更自然熱情。'},
+{id:'rp2',bl:6,blabel:'Create',title:'LINE 聊天：跟美國筆友介紹台灣節日',ctx:'casual-chat',
+scenario:'你的美國筆友 Emma 傳 LINE 問你台灣有哪些重要節日，各在什麼時候。\n請寫 5-6 句 LINE 對話，提到至少 3 個台灣節日及日期。',
+sample_answer:"Emma: Hey! I want to know about holidays in Taiwan 🇹🇼\nYou: Sure! We have the Moon Festival in September. We eat mooncakes! 🥮\nEmma: Cool! What else?\nYou: Double Tenth Day is on October 10th. It's like your Independence Day!\nEmma: When is Teacher's Day?\nYou: It's on September 28th. We wish our teachers a happy day! 🎉",
+grading_focus:['提到至少 3 個節日','It\'s on + 日期 / It\'s in + 月份','使用 celebrate / wish / call','LINE 聊天風格'],
+native_speaker_tip:'LINE/簡訊中用 Hey! / Cool! / What about...? 比 Dear Emma 自然。'},
+{id:'rp3',bl:6,blabel:'Create',title:'設計班級節日',ctx:'school',
+scenario:'請為你的班級設計一個「班級節日」。\n用英文寫出：(1) 節日名稱 (2) 日期 (3) 慶祝方式（至少 3 個活動）。共 4-5 句。',
+sample_answer:"Our class festival is called 'Friendship Day.' It's on November fifteenth. We celebrate it in many ways. For example, we write cards and wish each other well. We also have a big party with colorful decorations and share food with each other.",
+grading_focus:['節日名稱用 call/called 表達','正確日期表達','至少 3 個活動','使用本課詞彙'],
+native_speaker_tip:'用 For example 列舉活動更有條理。'},
+{id:'rp4',bl:5,blabel:'Evaluate',title:'禮貌用語分析',ctx:'school',
+scenario:'對話中 Yash 用 Can I please take ten days off? 來請假。如果改成 I want ten days off，哪種比較適合對老師說？為什麼？\n請用英文寫 2-3 句。',
+sample_answer:"'Can I please take ten days off?' is better because it is polite. Using 'Can I please' shows respect to the teacher. 'I want ten days off' sounds too direct and rude.",
+grading_focus:['判斷禮貌程度差異','理解 Can I please 是禮貌請求','能用英文說明理由'],
+native_speaker_tip:'母語人士對老師或長輩通常用 Could I / May I / Can I please，而非直接說 I want。'},
+];
+const NATIVE_TIPS=[
+{title:'日期的口語簡化',content:'書寫 March 9 → 口語一定要唸 March ninth（序數）。母語人士常省略年份：When\'s your birthday? → March ninth.'},
+{title:'問日期的口語習慣',content:"正式：What is the date today?\n口語：What's today's date?\n超口語：What date is it?"},
+{title:'回答日期兩種風格',content:"美式（台灣主要教）：It's March ninth.\n英式：It's the ninth of March.\n建議：選一種用就好。"},
+{title:'表達「快到了」',content:"課本：just around the corner\n母語人士也說：\n• Coming up — Christmas is coming up!\n• Almost here — My birthday is almost here!"},
+{title:'請假的禮貌表達',content:"課本 Yash：Can I please take ten days off?\n更正式：Could I take ten days off?\n口語（朋友間）：I need to take some days off.\n建議：對老師用 Can I please 或 May I。"},
+{title:'祝福的道地用法',content:"課本：wish everyone a happy New Year\n口語：Happy New Year!（最常用）\n書面：Wishing you a great new year!\n溫暖版：Have a wonderful new year!"},
+];
+let curTab=0;
+const dpProgress=JSON.parse(localStorage.getItem('l3_dialogue_progress')||'{}');
+function saveDp(){try{localStorage.setItem('l3_dialogue_progress',JSON.stringify(dpProgress))}catch(e){}}
+function speak(t){if(!window.speechSynthesis)return;const u=new SpeechSynthesisUtterance(t);u.lang='en-US';u.rate=0.85;speechSynthesis.cancel();speechSynthesis.speak(u)}
+function buildTabs(){
+document.getElementById('mainTabs').innerHTML=TABS.map((t,i)=>`<div class="tab${i===curTab?' active':''}" onclick="switchTab(${i})">${t}</div>`).join('');
+}
+function switchTab(i){curTab=i;buildTabs();renderTab()}
+function renderTab(){
+const c=document.getElementById('mainContent');
+if(curTab===0)renderPatterns(c);
+else if(curTab===1)renderRoleplays(c);
+else if(curTab===2)renderNative(c);
+else renderProgress(c);
+}
+function renderPatterns(c){
+let h='<div class="section"><h2>🔑 可遷移句型庫（在真實對話中可立刻用）</h2>';
+PATTERNS.forEach((p,i)=>{
+h+=`<div class="pattern-card"><div class="pattern-en">${p.en} <button class="speak-btn" onclick="speak('${p.examples[0]}')" title="聽發音">🔊</button></div><div class="pattern-zh">${p.zh}</div><div class="pattern-examples">`;
+p.examples.forEach(ex=>{h+=`<div>• ${ex} <button class="speak-btn" onclick="speak('${ex.replace(/'/g,"\\'")}')" style="font-size:14px">🔊</button></div>`});
+h+=`</div><div class="pattern-ctx">情境：${p.ctx.map(c=>`<span class="ctx-tag">${c}</span>`).join(' ')}</div></div>`;
+});
+h+='</div>';c.innerHTML=h;
+}
+function renderRoleplays(c){
+let h='<div class="section"><h2>🎭 對話角色扮演</h2><p style="font-size:13px;color:#888;margin-bottom:14px">寫出你的對話，提交後對照參考答案與自評清單。</p>';
+ROLEPLAYS.forEach((rp,i)=>{
+h+=`<div class="section" style="border:1px solid #fed7aa"><span class="bloom-badge" style="background:${rp.bl===6?'#f59e0b':'#ec4899'}">L${rp.bl} ${rp.blabel}</span>`;
+h+=`<h3 style="font-size:15px;margin-bottom:8px">${rp.title}</h3>`;
+h+=`<div style="font-size:12px;margin-bottom:6px"><span class="ctx-tag">${rp.ctx}</span></div>`;
+h+=`<div class="scenario">${rp.scenario.replace(/\n/g,'<br>')}</div>`;
+h+=`<div class="roleplay-area"><textarea id="rp${i}" placeholder="在此寫你的對話..."></textarea></div>`;
+h+=`<div class="flex-center"><button class="btn btn-primary" onclick="submitRP(${i})">提交我的對話</button></div>`;
+h+=`<div class="feedback" id="rpfb${i}"></div></div>`;
+});
+h+='</div>';c.innerHTML=h;
+}
+function submitRP(i){
+const rp=ROLEPLAYS[i],fb=document.getElementById('rpfb'+i);
+let html=`<h3 style="font-size:14px;margin-bottom:8px">📖 參考答案（sample_answer）</h3><div class="sample-answer">${rp.sample_answer}</div>`;
+html+=`<h3 style="font-size:14px;margin:10px 0 6px">✅ 自評清單（grading_focus）</h3><ul class="grading-focus">`;
+rp.grading_focus.forEach(f=>{html+=`<li>□ ${f}</li>`});
+html+=`</ul><div class="native-tip">🗣️ 母語人士小貼士（native_speaker_tip）<br>${rp.native_speaker_tip}</div>`;
+fb.innerHTML=html;fb.classList.add('show');
+dpProgress[rp.id]=true;saveDp();
+}
+function renderNative(c){
+let h='<div class="section"><h2>🗣️ 母語人士道地說法</h2><p style="font-size:13px;color:#888;margin-bottom:14px">從 web_research 中整理的母語人士用法，幫助你說出更自然的英文。</p>';
+NATIVE_TIPS.forEach(tip=>{
+h+=`<div class="pattern-card"><div class="pattern-en" style="font-size:15px">${tip.title}</div><div style="font-size:13px;color:#555;margin-top:8px;white-space:pre-line;line-height:1.7">${tip.content}</div></div>`;
+});
+h+='</div>';c.innerHTML=h;
+}
+function renderProgress(c){
+const total=ROLEPLAYS.length;
+const done=ROLEPLAYS.filter(rp=>dpProgress[rp.id]).length;
+let h=`<div class="section"><h2>📊 對話練習進度</h2>`;
+h+=`<p style="font-size:15px;font-weight:600;margin-bottom:12px">完成 ${done} / ${total} 個角色扮演</p>`;
+h+=`<div class="progress-tracker">`;
+ROLEPLAYS.forEach(rp=>{
+h+=`<div class="progress-dot${dpProgress[rp.id]?' done':''}" title="${rp.title}">${dpProgress[rp.id]?'✓':'·'}</div>`;
+});
+h+=`</div>`;
+h+=`<div style="margin-top:16px"><h3 style="font-size:14px;margin-bottom:8px">🎯 學習建議</h3>`;
+if(done===0)h+=`<p style="font-size:13px;color:#888">先從「🔑 可遷移句型」開始練習發音，再挑戰角色扮演！</p>`;
+else if(done<total)h+=`<p style="font-size:13px;color:#888">很棒！繼續完成剩餘的角色扮演練習。</p>`;
+else h+=`<p style="font-size:13px;color:#22c55e;font-weight:600">🎉 全部完成！你已經準備好與母語人士對話了！</p>`;
+h+=`</div><div class="flex-center"><button class="btn btn-reset" onclick="dpProgress={};saveDp();renderTab()">🔄 重置進度</button></div></div>`;
+c.innerHTML=h;
+}
+buildTabs();renderTab();
+</script>
+</body>
+</html>
